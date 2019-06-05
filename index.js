@@ -1,52 +1,38 @@
-'use strict';
+const _ = require('lodash');
 
-class ServerlessPlugin {
+class RemoveScheduledEventsPlugin {
   constructor(serverless, options) {
     this.serverless = serverless;
     this.options = options;
-
-    this.commands = {
-      welcome: {
-        usage: 'Helps you start your first Serverless plugin',
-        lifecycleEvents: [
-          'hello',
-          'world',
-        ],
-        options: {
-          message: {
-            usage:
-              'Specify the message you want to deploy '
-              + '(e.g. "--message \'My Message\'" or "-m \'My Message\'")',
-            required: true,
-            shortcut: 'm',
-          },
-        },
-      },
-    };
+    this.awsProvider = this.serverless.getProvider('aws');
+    this.stage = this.options.stage;
+    this.allowedStages = _.get(this, 'serverless.service.custom.remove-schedule.stages') || ['dev'];
 
     this.hooks = {
-      'before:welcome:hello': this.beforeWelcome.bind(this),
-      'welcome:hello': this.welcomeUser.bind(this),
-      'welcome:world': this.displayHelloMessage.bind(this),
-      'after:welcome:world': this.afterHelloWorld.bind(this),
+      'before:package:setupProviderConfiguration': this.removeScheduledFunctions.bind(this),
     };
   }
 
-  beforeWelcome() {
-    this.serverless.cli.log('Hello from Serverless!');
-  }
+  removeScheduledFunctions() {
+    if (this.allowedStages.indexOf(this.stage) !== -1) {
+      let { functions } = this.serverless.service;
+      this.serverless.cli.log(`Removing scheduled events from functions in stage: ${this.stage}`);
 
-  welcomeUser() {
-    this.serverless.cli.log('Your message:');
-  }
+      this.serverless.service.functions = _.mapValues(functions, (fn) => {
+        return Object.assign(fn, {
+          events: fn.events.map((ev) => {
+            let newEv = _.cloneDeep(ev);
 
-  displayHelloMessage() {
-    this.serverless.cli.log(`${this.options.message}`);
-  }
+            if (newEv.schedule !== undefined) {
+              delete newEv.schedule
+            }
 
-  afterHelloWorld() {
-    this.serverless.cli.log('Please come again!');
+            return newEv
+          })
+        })
+      });
+    }
   }
 }
 
-module.exports = ServerlessPlugin;
+module.exports = RemoveScheduledEventsPlugin;

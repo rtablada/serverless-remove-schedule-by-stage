@@ -1,6 +1,21 @@
 {
-  "name": "serverless-remove-schedule-by-stage",
+  "name": "serverless-remove-scheduled-events-by-stage",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "author": {
+    "name": "Ryan Tablada",
+    "email": "ryan.tablada@gmail.com"
+  },
+  "repository": {
+    "url": "https://github.com/rtablada/serverless-remove-schedule-by-stage.git",
+    "type": "git"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.13.0"
+  }
 }
