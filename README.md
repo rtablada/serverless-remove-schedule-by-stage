@@ -6,16 +6,18 @@ For instance if you have a `dev` stage where you only want to trigger events man
 
 ## Installation
 
-First install the plugin with `npm` or `yarn`
+First install the plugin with `npm` or `yarn`:
 
 ```bash
 npm install --dev serverless-remove-scheduled-events-by-stage
 yarn add --dev serverless-remove-scheduled-events-by-stage
 ```
 
-Next add the plugin config to `custom` in your `serverless.yml`
+Next add the plugin to the plugins array and add config to `custom` in your `serverless.yml`:
 
 ```yml
+plugins:
+  - serverless-remove-scheduled-events-by-stage
 custom:
   some-other-config: Hello World
   remove-schedule:
@@ -33,6 +35,8 @@ service: my-service
 provider:
   name: aws
   runtime: nodejs8.10
+plugins:
+  - serverless-remove-scheduled-events-by-stage
 custom:
   some-other-config: Hello World
   remove-schedule:
