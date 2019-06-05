@@ -1,0 +1,6 @@
+{
+  "name": "serverless-remove-schedule-by-stage",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
+}
